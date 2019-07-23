@@ -11,11 +11,8 @@ from bn_python_common import *
 memBufferSize = 4 * 1024 * 1024
 
 useHardcodedServerAddress = False
-# useHardcodedServerAddress = '172.16.58.110'
 useHardcodedFilesToSend = False
-# useHardcodedFilesToSend = r'..\test1\*.jpeg'
 useHardcodedToken = False
-# useHardcodedToken = 'tokenTesting'
 
 def memoryEfficientCopyFileObject(src, dest):
     while True:
