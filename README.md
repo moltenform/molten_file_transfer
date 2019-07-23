@@ -10,7 +10,7 @@ Example:
 * Type a directory, like `/home/me/myfiles/*`
 * Run main.py in your virtual machine.
 * Select `Connect to a mft server and receive files`
-* Type the IP address and other info, then the files will be transfered!
+* Type the IP address and other info, then the files will be transferred!
 
 Why use this script instead of a VirtualBox shared folder?
 * Works on a virtual machine running an OS that doesn't support shared folders
