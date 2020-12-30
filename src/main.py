@@ -17,7 +17,7 @@ def main():
         '''https://github.com/moltenform/molten_file_transfer''' \
         '''\n(For virtual machines, I recommend\n to 'start a server' ''' \
         '''on the host machine \nand 'connect to server' in the vm)\n\n'''
-    
+
     while True:
         trace(msg)
         choices = [
@@ -72,7 +72,7 @@ def initClientSend():
     trace('Which file(s) should we send to the server?')
     isStar, path = getUserTypedFilesOrThrow()
     mft_impl_send.goClientSend(cxnParams, isStar, path)
-    
+
 def initClientReceive():
     cxnParams = goClientConnectOrThrow()
     getPressEnterToContinue('Start receiving files from the server?')
@@ -81,14 +81,14 @@ def initClientReceive():
 def getUserTypedFilesOrThrow():
     example = 'C:\\MyFiles\\* or C:\\MyFiles\\*.jpg' if sys.platform == 'win32' \
         else '/home/me/myfiles/* or /home/me/myfiles/*.jpg'
-    
+
     if useHardcodedFilesToSend:
         trace('using this path,', useHardcodedFilesToSend)
         typed = useHardcodedFilesToSend
     else:
         typed = getStrInput('Please enter the path of a file or ' +
             'directory \nFor example, you could type ' + example + '\n')
-    
+
     isStar, path = parseWildcardExpr(typed)
     return isStar, path
 
@@ -105,7 +105,7 @@ def parseWildcardExpr(s):
         return False, s
     if len(parts) >= 3:
         raise MoltenTFException(tooComplex)
-    
+
     return True, s
 
 def goClientConnectOrThrow():
@@ -114,12 +114,12 @@ def goClientConnectOrThrow():
         cxnParams.ip = useHardcodedServerAddress
     else:
         cxnParams.ip = getStrInput("What is the IP address for the server?\n")
-    
+
     if useHardcodedToken:
         cxnParams.token = useHardcodedToken
     else:
         cxnParams.token = getStrInput("What is the token for the server?\n")
-        
+
     # verify that the connection works
     trace('Attempting to connect...')
     url, urlpart = createServerUrlString(cxnParams, suburl='/ping')

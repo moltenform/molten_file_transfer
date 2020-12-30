@@ -102,27 +102,27 @@ class SerializableListOfFileInfo(object):
     def __init__(self):
         self._listOfFilenames = []
         self._listOfChecksums = []
-    
+
     def len(self):
         return len(self._listOfFilenames)
-    
+
     def addFiles(self, listFileFullPaths):
         for f in listFileFullPaths:
             self._listOfFilenames.append(f)
             self._listOfChecksums.append(files.computeHash(f, 'sha256'))
-    
+
     def serializeWithOnlyLeafNames(self):
         assertEq(len(self._listOfFilenames), len(self._listOfChecksums))
         listOfNamesOnly = [files.getname(f) for f in self._listOfFilenames]
         zipped = zip(listOfNamesOnly, self._listOfChecksums)
         return '\n'.join('|'.join(parts) for parts in zipped)
-        
+
     def deserialize(self, s):
         for pts in s.replace('\r\n', '\n').split('\n'):
             infos = pts.split('|')
             self._listOfFilenames.append(infos[0])
             self._listOfChecksums.append(infos[1])
-    
+
     def infoAtIndex(self, index):
         assertTrue(index >= 0,
             'cannot get a negative index', index)
@@ -132,7 +132,7 @@ class SerializableListOfFileInfo(object):
         return Bucket(
             filename=self._listOfFilenames[index],
             checksum=self._listOfChecksums[index])
-    
+
     def infoAtIndexString(self, params, key):
         index = params.get(key)
         if index is None:
@@ -142,7 +142,7 @@ class SerializableListOfFileInfo(object):
         except:
             raise Exception(f'Parameter {key} must be an integer')
         return self.infoAtIndex(index)
-    
+
     def addFromSpec(self, path, isStar):
         if isStar:
             import glob
@@ -216,7 +216,7 @@ def showMsg(level, s1, s2=None, s3=None):
         s += ' ' + str(s2)
     if s3:
         s += ' ' + str(s3)
-    
+
     if level < 10 or debugMode():
         # use trace as it handles printing unicode characters
         trace(s)
@@ -233,14 +233,14 @@ def encodeForGet(s):
 
 def createServerUrlString(cxnParams, suburl='/', moreGetParams=None):
     assertTrue(suburl.startswith('/'))
-    
+
     args = {}
     if moreGetParams:
         args.update(moreGetParams)
-    
+
     if 'token' not in args:
         args['token'] = cxnParams.token
-    
+
     partOfUrl = suburl
     partOfUrl += '?'
     partOfUrl += '&'.join([key + '=' + encodeForGet(args[key]) for key in args])

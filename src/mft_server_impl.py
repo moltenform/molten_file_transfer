@@ -9,7 +9,7 @@ def parseIndexParam(params, fileState):
         raise MoltenTFException(
             'Internal error, get_file_list should have been called first')
     return fileState.listOfFiles.infoAtIndexString(params, 'index')
-    
+
 def get_file_list(params, stateGetFile, path, isStar):
     stateGetFile.b = Bucket()
     stateGetFile.b.listOfFiles = SerializableListOfFileInfo()
@@ -35,7 +35,7 @@ def send_file_list(params, stateSendFile):
     fls = params.get('listOfFiles')
     if not fls:
         raise MoltenTFException('Missing parameter: listOfFiles')
-    
+
     stateSendFile.b = Bucket()
     stateSendFile.b.warnings = []
     stateSendFile.b.listOfFiles = SerializableListOfFileInfo()
@@ -45,13 +45,13 @@ def send_file_list(params, stateSendFile):
 def send_file(params, stateSendFile, serverRStream, headers):
     item = parseIndexParam(params, stateSendFile.b)
     checkOkDestPath(item.filename)
-    
+
     dest = f'{getOurDirectory()}/files_we_got_from_guest'
     doAndCheckForFileAccessErrAndReRaise(lambda: files.makedirs(dest), dest)
     fulldest = dest + '/' + item.filename
     if files.exists(fulldest):
         warn('Already exists: ' + fulldest + ' replace?')
-    
+
     expectedLen = headers.get('content-length')
     try:
         expectedLen = int(expectedLen)
@@ -61,7 +61,7 @@ def send_file(params, stateSendFile, serverRStream, headers):
     showMsg(msgMed, f'reading data of length {formatSize(expectedLen)}')
     doAndCheckForFileAccessErrAndReRaise(lambda: send_file_stream_content(
         serverRStream, expectedLen, fulldest), fulldest)
-    
+
     checksumGot = files.computeHash(fulldest, 'sha256')
     checksumExpected = item.checksum
     if checksumExpected != checksumGot:
@@ -87,7 +87,7 @@ def send_file_complete(params, stateSendFile):
         warningsOccurred = True
         for warning in warnings:
             showMsg(msgHigh, 'WARNING: ' + warning)
-    
+
     stateSendFile.b = None
     if warningsOccurred:
         response = 'Molten:' + ('\n'.join(warnings))[0:1024]

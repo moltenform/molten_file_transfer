@@ -12,14 +12,14 @@ def goClientSend(cxnParams, isStar, path):
     if not listOfFiles or not listOfFiles.len():
         getPressEnterToContinue('No files found to send')
         return
-    
+
     # step 1: tell the server what files we are copying
     showMsg(msgMed, f'about to send {listOfFiles.len()} files...')
     showMsg(msgMed, 'telling the server what files we are copying...')
     getParams = {}
     getParams['listOfFiles'] = listOfFiles.serializeWithOnlyLeafNames()
     sendPostAndCheckSuccess(cxnParams, '/send_file_list', getParams)
-    
+
     # step 2: send files to the server
     for i in range(listOfFiles.len()):
         item = listOfFiles.infoAtIndex(i)
@@ -31,7 +31,7 @@ def goClientSend(cxnParams, isStar, path):
             specialPostArgs = dict(data=f)
             sendPostAndCheckSuccess(cxnParams, '/send_file', getParams,
                 specialPostArgs=specialPostArgs, timeout=None)
-        
+
     # step 3: tell server we are done
     showMsg(msgMed, 'telling the server we are done...')
     sendPostAndCheckSuccess(cxnParams, '/send_file_complete', {})
@@ -45,16 +45,16 @@ def goClientSend(cxnParams, isStar, path):
 def sendPostAndCheckSuccess(cxnParams, suburl, getParams,
         specialPostArgs=None, timeout=10):
     time.sleep(1)
-    
+
     args = {}
     if specialPostArgs:
         args.update(specialPostArgs)
     else:
         args['data'] = None
-    
+
     url, urlpart = createServerUrlString(cxnParams, suburl, moreGetParams=getParams)
     showMsg(msgInfo, '---------------', urlpart)
-    
+
     args['timeout'] = timeout
     args['url'] = url
     args['headers'] = {'Content-Type': 'application/octet-stream'}
@@ -63,6 +63,6 @@ def sendPostAndCheckSuccess(cxnParams, suburl, getParams,
         showMsg(msgHigh, f'Error: returned code {res.status_code}')
         showMsg(msgHigh, res.text.strip())
         raise MoltenTFException('Got a message from server.')
-    
+
     assertTrueMolten('Molten:Success' == res.text.strip(),
         'Server did not return expected response', res.text.strip())

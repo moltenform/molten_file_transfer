@@ -14,11 +14,11 @@ def goClientReceive(cxnParams):
     assertTrue(len(listNames) > 0, 'listNames is empty?')
     listOfFiles = SerializableListOfFileInfo()
     listOfFiles.deserialize(listNames)
-    
+
     if not listOfFiles or not listOfFiles.len():
         trace('server is not serving any files')
         return
-    
+
     # step 2: get files from the server
     for i in range(listOfFiles.len()):
         item = listOfFiles.infoAtIndex(i)
@@ -28,10 +28,10 @@ def goClientReceive(cxnParams):
         res, resText = sendGetAndCheckSuccess(
             cxnParams, '/get_file', getParams, stream=True, timeout=None)
         fulldest = checkWriteFile(item.filename)
-        
+
         doAndCheckForFileAccessErrAndReRaise(lambda: doWriteToFile(res, fulldest),
             fulldest)
-        
+
         checksumGot = files.computeHash(fulldest, 'sha256')
         checksumExpected = item.checksum
         showMsg(msgMed,
@@ -42,7 +42,7 @@ def goClientReceive(cxnParams):
             warning = f'{files.getname(fulldest)} wrong checksum, ' + \
                 f'expected {checksumExpected} but got {checksumGot}'
             warn(warning)
-    
+
     # step 3: tell server we are done
     showMsg(msgMed, 'tell server we are done...')
     res, resText = sendGetAndCheckSuccess(cxnParams, '/get_file_complete')
@@ -67,7 +67,7 @@ def checkWriteFile(itemPath):
     doAndCheckForFileAccessErrAndReRaise(lambda: files.makedirs(parent), parent)
     if files.exists(dest):
         warn('Already exists: ' + dest + ' replace?')
-    
+
     return dest
 
 def sendGetAndCheckSuccess(cxnParams, suburl,
@@ -77,12 +77,12 @@ def sendGetAndCheckSuccess(cxnParams, suburl,
     showMsg(msgInfo, '---------------', urlpart)
     res = requests.get(url, stream=stream, timeout=timeout)
     resText = '' if stream else res.text.strip()
-    
+
     if res.status_code != 200:
         trace(f'Error: returned code {res.status_code}')
         trace(resText)
         raise MoltenTFException('Got a message from server.')
-    
+
     if not stream:
         res.encoding = 'utf=8'
         resText = expectResponseStartsWithCorrectPrefix(resText)
