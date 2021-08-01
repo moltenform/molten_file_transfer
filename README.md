@@ -20,6 +20,7 @@ Why use this script instead of a VirtualBox shared folder?
 Why use this script to transfer files across a local network?
 * No need to set up NFS, webdav, an rsync daemon, or windows file sharing - just type in an IP address
 * SHA256 hashes verify that the file contents are correct
+* magic-wormhole is a similar tool, but this tool is simpler
 
 More info
 * Uses a per-session token so that only an authorized client can connect
