@@ -144,14 +144,19 @@ class SerializableListOfFileInfo(object):
         return self.infoAtIndex(index)
 
     def addFromSpec(self, path, isStar):
+        pathsToAdd = []
         if isStar:
             import glob
             fs = glob.glob(path, recursive=False)
             for f in fs:
                 if files.isfile(f):
-                    self.addFiles([f])
+                    pathsToAdd.append(f)
         else:
             assertTrue(files.isfile(path), path)
+            pathsToAdd.append(path)
+
+        pathsToAdd.sort()
+        for path in pathsToAdd:
             self.addFiles([path])
 
 def isOkExtension(s):
