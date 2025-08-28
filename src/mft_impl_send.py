@@ -24,7 +24,7 @@ def goClientSend(cxnParams, isStar, path):
     for i in range(listOfFiles.len()):
         item = listOfFiles.infoAtIndex(i)
         showMsg(msgVerbose, f'sending file {i+1} of {listOfFiles.len()}...')
-        showMsg(msgMed, f'  {files.getname(item.filename)}')
+        showMsg(msgMed, f'  {files.getName(item.filename)}')
         getParams = {}
         getParams['index'] = str(i)
         with open(item.filename, 'rb') as f:

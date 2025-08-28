@@ -97,7 +97,7 @@ def parseWildcardExpr(s):
         'like *.jpg or *'
     parts = s.split('*')
     if len(parts) <= 1:
-        if files.isdir(s):
+        if files.isDir(s):
             raise MoltenTFException('To send all files in a directory, ' +
                 'type something like "/home/myfiles/*"')
         if not files.exists(s):

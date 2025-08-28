@@ -113,7 +113,7 @@ class SerializableListOfFileInfo(object):
 
     def serializeWithOnlyLeafNames(self):
         assertEq(len(self._listOfFilenames), len(self._listOfChecksums))
-        listOfNamesOnly = [files.getname(f) for f in self._listOfFilenames]
+        listOfNamesOnly = [files.getName(f) for f in self._listOfFilenames]
         zipped = zip(listOfNamesOnly, self._listOfChecksums)
         return '\n'.join('|'.join(parts) for parts in zipped)
 
@@ -149,10 +149,10 @@ class SerializableListOfFileInfo(object):
             import glob
             fs = glob.glob(path, recursive=False)
             for f in fs:
-                if files.isfile(f):
+                if files.isFile(f):
                     pathsToAdd.append(f)
         else:
-            assertTrue(files.isfile(path), path)
+            assertTrue(files.isFile(path), path)
             pathsToAdd.append(path)
 
         pathsToAdd.sort()

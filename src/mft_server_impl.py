@@ -20,7 +20,7 @@ def get_file_list(params, stateGetFile, path, isStar):
 
 def get_file(params, stateGetFile):
     item = parseIndexParam(params, stateGetFile.b)
-    showMsg(msgMed, f'  {files.getname(item.filename)}')
+    showMsg(msgMed, f'  {files.getName(item.filename)}')
     return Bucket(response=None, directPath=item.filename)
 
 def get_file_complete(params, stateGetFile):
@@ -47,7 +47,7 @@ def send_file(params, stateSendFile, serverRStream, headers):
     checkOkDestPath(item.filename)
 
     dest = f'{getOurDirectory()}/files_we_got_from_guest'
-    doAndCheckForFileAccessErrAndReRaise(lambda: files.makedirs(dest), dest)
+    doAndCheckForFileAccessErrAndReRaise(lambda: files.makeDirs(dest), dest)
     fulldest = dest + '/' + item.filename
     if files.exists(fulldest):
         warn('Already exists: ' + fulldest + ' replace?')
@@ -65,12 +65,12 @@ def send_file(params, stateSendFile, serverRStream, headers):
     checksumGot = files.computeHash(fulldest, 'sha256')
     checksumExpected = item.checksum
     if checksumExpected != checksumGot:
-        warning = f'{files.getname(fulldest)} wrong checksum, ' + \
+        warning = f'{files.getName(fulldest)} wrong checksum, ' + \
             f'expected {checksumExpected} but got {checksumGot}'
         showMsg(msgHigh, warning)
         stateSendFile.b.warnings.append(warning)
     showMsg(msgMed,
-        f'  {files.getname(fulldest)}')
+        f'  {files.getName(fulldest)}')
     showMsg(msgVerbose,
         f'  checksumGot={checksumGot}|checksumExpected={checksumExpected}')
     return Bucket(directPath=None, response='Molten:Success')

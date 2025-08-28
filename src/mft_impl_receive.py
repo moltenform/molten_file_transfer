@@ -35,11 +35,11 @@ def goClientReceive(cxnParams):
         checksumGot = files.computeHash(fulldest, 'sha256')
         checksumExpected = item.checksum
         showMsg(msgMed,
-            f'  {files.getname(fulldest)}')
+            f'  {files.getName(fulldest)}')
         showMsg(msgVerbose,
             f'  checksumGot={checksumGot}|checksumExpected={checksumExpected}')
         if checksumExpected != checksumGot:
-            warning = f'{files.getname(fulldest)} wrong checksum, ' + \
+            warning = f'{files.getName(fulldest)} wrong checksum, ' + \
                 f'expected {checksumExpected} but got {checksumGot}'
             warn(warning)
 
@@ -63,8 +63,8 @@ def doWriteToFile(res, fulldest):
 def checkWriteFile(itemPath):
     checkOkDestPath(itemPath)
     dest = f'{getOurDirectory()}/files_we_got_from_host/{itemPath}'
-    parent = files.getparent(dest)
-    doAndCheckForFileAccessErrAndReRaise(lambda: files.makedirs(parent), parent)
+    parent = files.getParent(dest)
+    doAndCheckForFileAccessErrAndReRaise(lambda: files.makeDirs(parent), parent)
     if files.exists(dest):
         warn('Already exists: ' + dest + ' replace?')
 
