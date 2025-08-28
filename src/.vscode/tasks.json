@@ -5,7 +5,7 @@
         {
             "label": "python lint",
             "type": "shell",
-            "command": "py .vscode/pylint_filtered.py",
+            "command": "py .vscode/lint_filtered.py",
             "problemMatcher": [],
             "group": {
                 "kind": "build",
@@ -18,7 +18,7 @@
         {
             "label": "ruff lint",
             "type": "shell",
-            "command": "py .vscode/pylint_filtered.py --ruff",
+            "command": "py .vscode/lint_filtered.py --ruff",
             "problemMatcher": [],
             "group": {
                 "kind": "build",
@@ -31,7 +31,7 @@
         {
             "label": "ruff lint autofix",
             "type": "shell",
-            "command": "py .vscode/pylint_filtered.py --ruff --fix",
+            "command": "py .vscode/lint_filtered.py --ruff --fix",
             "problemMatcher": [],
             "group": {
                 "kind": "build",

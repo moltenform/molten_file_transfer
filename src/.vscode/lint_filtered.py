@@ -7,6 +7,7 @@ def mainPylint():
     args = ['-m', 'pylint', '--rcfile', 'pyproject.toml', '--ignore-paths=.*OUTSIDE.*', '--output-format=json2', '.']
     pyExe = sys.executable
     args.insert(0, pyExe)
+    print(args)
     retcode, stdout, stderr = files.run(args, throwOnFailure=False)
     stdout = stdout.decode('utf-8')
     events = json.loads(stdout)
@@ -17,13 +18,13 @@ def mainPylint():
             # skip this - we don't care about it for Bucket
             continue
         if "W0621: Redefining name 'fixture_" in line:
-            # skip this - we don't care about it for fixures
+            # skip this - we don't care about it for fixtures
             continue
         if "Access to a protected member _get of" in line:
-            # skip this - we don't care about it for fixures
+            # skip this - we don't care about it for fixtures
             continue
         if "Access to a protected member _get_id of" in line:
-            # skip this - we don't care about it for fixures
+            # skip this - we don't care about it for fixtures
             continue
 
         print(line)
@@ -36,13 +37,14 @@ def mainRuff():
     args.append('.')
     pyExe = sys.executable
     args.insert(0, pyExe)
+    print(args)
     retcode, stdout, stderr = files.run(args, throwOnFailure=False)
     stdout = stdout.decode('utf-8')
     events = json.loads(stdout)
     for event in events:
         line = formatOneLineRuff(event)
         if "Access to a protected member _get_id of" in line:
-            # skip this - we don't care about it for fixures
+            # skip this - we don't care about it for fixtures
             continue
 
         print(line)

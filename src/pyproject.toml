@@ -38,18 +38,18 @@ target-version = "py38"
 # tell ruff not to fix blank-lines-after-function-or-class
 
 [tool.ruff.lint]
-fixable = ["F403"]
+fixable = ["ALL"]
 unfixable = [
     "ERA", # do not autoremove commented out code
-    "E301",
-    "E302",
-    "E303",
-    "E304",
-    "E305",
-    "E306",
-    "F401",
-    "F841",
-    "PIE804", 
+    "E301", # blank-line-between-methods
+    "E302", # blank-lines-top-level
+    "E303", # too-many-blank-lines
+    "E304", # blank-line-after-decorator
+    "E305", # blank-lines-after-function-or-class
+    "E306", # blank-lines-before-nested-definition
+    "F401", # multiple-imports-on-one-line
+    "F841", # unused-variable
+    "PIE804", #	unnecessary-dict-kwargs
 ]
 extend-select = [
     "B",   # flake8-bugbear
