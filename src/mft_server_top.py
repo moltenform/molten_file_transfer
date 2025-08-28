@@ -15,6 +15,7 @@ import sys
 from mft_common import *
 import mft_server_impl
 
+
 class MoltenFileTransferServer(BaseHTTPRequestHandler):
     stateGetFile = Bucket()
     stateSendFile = Bucket()
@@ -33,10 +34,12 @@ class MoltenFileTransferServer(BaseHTTPRequestHandler):
     def log_message(self, format, *args):
         # overrides the default implementation
         if self.logfile:
-            self.logfile.write("%s - - [%s] %s\n" %
-                (self.client_address[0],
-                 self.log_date_time_string(),
-                 format % args))
+            self.logfile.write(
+                "%s - - [%s] %s\n" % (
+                    self.client_address[0], self.log_date_time_string(),
+                    format % args
+                )
+            )
             self.logfile.flush()
 
     def do_GETImpl(self):
@@ -49,23 +52,24 @@ class MoltenFileTransferServer(BaseHTTPRequestHandler):
 
         if self.filesPath == 'listen' and not pathBefore.endswith('/ping'):
             raise MoltenTFException(
-                'Server was set up for recieving files, it can\'t send files.')
+                'Server was set up for recieving files, it can\'t send files.'
+            )
 
         response = None
         if pathBefore.endswith('/get_file_list'):
             response = mft_server_impl.get_file_list(
-                getParams, self.stateGetFile, self.filesPath, self.filesIsStar)
+                getParams, self.stateGetFile, self.filesPath, self.filesIsStar
+            )
         elif pathBefore.endswith('/get_file'):
-            response = mft_server_impl.get_file(
-                getParams, self.stateGetFile)
+            response = mft_server_impl.get_file(getParams, self.stateGetFile)
         elif pathBefore.endswith('/get_file_complete'):
             response = mft_server_impl.get_file_complete(
-                getParams, self.stateGetFile)
+                getParams, self.stateGetFile
+            )
         elif pathBefore.endswith('/ping'):
             response = Bucket(directPath=None, response='Molten:Success')
         else:
-            raise MoltenTFException(
-                f'No such endpoint (get): {self.path}', 404)
+            raise MoltenTFException(f'No such endpoint (get): {self.path}', 404)
 
         mimetype = 'application/octet-stream'
         self.send_response(200)
@@ -91,21 +95,24 @@ class MoltenFileTransferServer(BaseHTTPRequestHandler):
 
         if self.filesPath != 'listen':
             raise MoltenTFException(
-                'Server was set up for sending files, it can\'t receive files.')
+                'Server was set up for sending files, it can\'t receive files.'
+            )
 
         response = None
         if pathBefore.endswith('/send_file_list'):
             response = mft_server_impl.send_file_list(
-                getParams, self.stateSendFile)
+                getParams, self.stateSendFile
+            )
         elif pathBefore.endswith('/send_file'):
             response = mft_server_impl.send_file(
-                getParams, self.stateSendFile, self.rfile, self.headers)
+                getParams, self.stateSendFile, self.rfile, self.headers
+            )
         elif pathBefore.endswith('/send_file_complete'):
             response = mft_server_impl.send_file_complete(
-                getParams, self.stateSendFile)
+                getParams, self.stateSendFile
+            )
         else:
-            raise MoltenTFException(
-                f'No such endpoint (post): {self.path}', 404)
+            raise MoltenTFException(f'No such endpoint (post): {self.path}', 404)
 
         mimetype = 'application/octet-stream'
         self.send_response(200)
@@ -114,13 +121,12 @@ class MoltenFileTransferServer(BaseHTTPRequestHandler):
         self.wfile.write(response.response.encode('utf-8'))
 
     def traditionalHandlePost(self):
-        env = {'REQUEST_METHOD': 'POST',
-            'CONTENT_TYPE': self.headers['Content-Type']}
+        env = {
+            'REQUEST_METHOD': 'POST',
+            'CONTENT_TYPE': self.headers['Content-Type']
+        }
 
-        form = cgi.FieldStorage(
-            fp=self.rfile,
-            headers=self.headers,
-            environ=env)
+        form = cgi.FieldStorage(fp=self.rfile, headers=self.headers, environ=env)
 
         data = form['key'].value
         if not data:
@@ -165,20 +171,17 @@ class MoltenFileTransferServer(BaseHTTPRequestHandler):
                 self.mySendErr(msg)
 
         showMsg(msgVerbose, 'Listening...')
-        showMsg(msgMed,
-            f'the address for this server is: {self.myIpAddr}')
-        showMsg(msgMed,
-            f'the token for this server is: {self.token}')
+        showMsg(msgMed, f'the address for this server is: {self.myIpAddr}')
+        showMsg(msgMed, f'the token for this server is: {self.token}')
+
 
 def goStartServer(filesIsStar, filesPath):
     try:
         showMsg(msgMed, 'welcome to moltenfiletransfer_server!')
         token = genToken()
         myIpAddr = displayActual192_168Address()
-        showMsg(msgMed,
-            f'the address for this server is: {myIpAddr}')
-        showMsg(msgMed,
-            f'the token for this server is: {token}')
+        showMsg(msgMed, f'the address for this server is: {myIpAddr}')
+        showMsg(msgMed, f'the token for this server is: {token}')
 
         server = HTTPServer(('', getPortNumber()), MoltenFileTransferServer)
         server.RequestHandlerClass.token = token
@@ -189,7 +192,9 @@ def goStartServer(filesIsStar, filesPath):
         logPath = f'{getOurDirectory()}/log'
 
         def makeLogFile():
-            server.RequestHandlerClass.logfile = open(logPath, 'a', encoding='utf-8')
+            server.RequestHandlerClass.logfile = open(
+                logPath, 'a', encoding='utf-8'
+            )
 
         doAndCheckForFileAccessErrAndReRaise(makeLogFile, logPath)
         showMsg(msgMed, 'started server on port', getPortNumber())

@@ -31,7 +31,7 @@ Homepage = "https://github.com/moltenform/molten_file_transfer"
 Issues = "https://github.com/moltenform/molten_file_transfer/issues"
 
 [tool.ruff]
-line-length = 120
+line-length = 83
 indent-width = 4
 # Assume Python 3.8
 target-version = "py38"
@@ -205,6 +205,6 @@ R0205
 based_on_style = "facebook"
 spaces_before_comment = 1
 split_before_logical_operator = false
-column_limit = 120
+column_limit = 83
 indent_width = 4
 

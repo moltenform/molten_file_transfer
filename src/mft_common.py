@@ -15,12 +15,14 @@ useHardcodedFilesToSend = False
 useDebugMode = False
 useHardcodedToken = useDebugMode
 
+
 def memoryEfficientCopyFileObject(src, dest):
     while True:
         data = src.read(memBufferSize)
         if not len(data):
             break
         dest.write(data)
+
 
 def memoryEfficientCopyFromStreamLen(serverRStream, f, expectedLen):
     countBytesGot = 0
@@ -30,15 +32,20 @@ def memoryEfficientCopyFromStreamLen(serverRStream, f, expectedLen):
         got = serverRStream.read(needNext)
         countBytesGot += len(got)
         f.write(got)
-        showMsg(msgVerbose,
-            f'got {formatSize(countBytesGot)}/{formatSize(expectedLen)}')
+        showMsg(
+            msgVerbose,
+            f'got {formatSize(countBytesGot)}/{formatSize(expectedLen)}'
+        )
+
 
 def getPortNumber():
     return 8123
 
+
 def getOurDirectory():
     import os
     return os.path.dirname(os.path.abspath(__file__))
+
 
 # the real params object returns an array,
 # we'd rather go straight to the value.
@@ -50,6 +57,7 @@ class GetParamWrapper(object):
         '''returns empty string if not found.'''
         ret = self.params.get(key, [''])
         return ret[0]
+
 
 def displayActual192_168Address():
     import socket
@@ -63,28 +71,36 @@ def displayActual192_168Address():
         return '(Could not get local address... please run ifconfig ' + \
             'or ipconfig and get address that usually looks like 192.168.*)'
 
+
 def genToken():
     if useHardcodedToken:
-        getPressEnterToContinue("We're using a hard-coded token " +
-            "for testing, don't run this in production :)")
+        getPressEnterToContinue(
+            "We're using a hard-coded token " +
+            "for testing, don't run this in production :)"
+        )
         return useHardcodedToken
     else:
         import secrets
         return secrets.token_urlsafe(6)
 
+
 def debugMode():
     return bool(useDebugMode)
 
+
 class MoltenTFException(Exception):
     pass
+
 
 def assertTrueMolten(b, context1='', context2='', context3=''):
     if not b:
         msg = 'An error occurred, ' + context1 + context2 + context3
         raise MoltenTFException(msg)
 
+
 def getPortNumberAsString():
     return ':' + str(getPortNumber())
+
 
 def isSimpleAlphaNumOrSymbolOrHigherUnicode(s):
     for c in s:
@@ -98,6 +114,7 @@ def isSimpleAlphaNumOrSymbolOrHigherUnicode(s):
         elif n > 128:
             return True
     return True
+
 
 class SerializableListOfFileInfo(object):
     def __init__(self):
@@ -125,14 +142,16 @@ class SerializableListOfFileInfo(object):
             self._listOfChecksums.append(infos[1])
 
     def infoAtIndex(self, index):
-        assertTrue(index >= 0,
-            'cannot get a negative index', index)
-        assertTrue(index < len(self._listOfFilenames),
+        assertTrue(index >= 0, 'cannot get a negative index', index)
+        assertTrue(
+            index < len(self._listOfFilenames),
             f'asked for index {index} but there are only ' +
-            f'{len(self._listOfFilenames)} files')
+            f'{len(self._listOfFilenames)} files'
+        )
         return Bucket(
             filename=self._listOfFilenames[index],
-            checksum=self._listOfChecksums[index])
+            checksum=self._listOfChecksums[index]
+        )
 
     def infoAtIndexString(self, params, key):
         index = params.get(key)
@@ -160,15 +179,20 @@ class SerializableListOfFileInfo(object):
         for pathToAdd in pathsToAdd:
             self.addFiles([pathToAdd])
 
+
 def isOkExtension(s):
     status = SrssFileExts.extensionPossiblyExecutable(s)
     if status == 'warn':
-        warn('Warning: extension ' + files.getExt(s) + ' might be executable. continue?')
+        warn(
+            'Warning: extension ' + files.getExt(s) +
+            ' might be executable. continue?'
+        )
         return True
     elif status:
         return False
     else:
         return True
+
 
 def checkOkDestPath(itemPath):
     # let's be really strict and check the filename
@@ -177,12 +201,15 @@ def checkOkDestPath(itemPath):
     if '..' in itemPath:
         raise MoltenTFException('We do not support sending relative paths')
     if not isSimpleAlphaNumOrSymbolOrHigherUnicode(itemPath):
-        raise MoltenTFException('Invalid char in path, we dissallow most ' +
-            'unicode characters for security reasons')
+        raise MoltenTFException(
+            'Invalid char in path, we dissallow most ' +
+            'unicode characters for security reasons'
+        )
     if not isOkExtension(itemPath):
         raise MoltenTFException('Disallowed extension')
     if not len(itemPath.strip()):
         raise MoltenTFException('Path is empty or whitespace')
+
 
 def doAndCatchMftException(fn):
     ret = None
@@ -196,14 +223,18 @@ def doAndCatchMftException(fn):
             raise
     return ret, caught
 
+
 def doAndCheckForFileAccessErrAndReRaise(fn, filepath):
     try:
         fn()
     except OSError:
-        getPressEnterToContinue("Looks like we could not access a file " +
+        getPressEnterToContinue(
+            "Looks like we could not access a file " +
             f"({filepath}). Unless you're already doing so, try running" +
-            " this script in a writable directory, and try again.")
+            " this script in a writable directory, and try again."
+        )
         raise
+
 
 def getStrInput(s, allowEmptyString=False):
     while True:
@@ -212,9 +243,11 @@ def getStrInput(s, allowEmptyString=False):
         if ret or allowEmptyString:
             return ret
 
+
 def getPressEnterToContinue(s):
     s += '\nPress ENTER to continue'
     getStrInput(s, True)
+
 
 def showMsg(level, s1, s2=None, s3=None):
     s = s1
@@ -233,9 +266,11 @@ msgVerbose = 9
 msgMed = 6
 msgHigh = 1
 
+
 def encodeForGet(s):
     s = str(s)
     return urllib.parse.quote(s)
+
 
 def createServerUrlString(cxnParams, suburl='/', moreGetParams=None):
     assertTrue(suburl.startswith('/'))
@@ -253,11 +288,13 @@ def createServerUrlString(cxnParams, suburl='/', moreGetParams=None):
     url = f'http://{cxnParams.ip}:{getPortNumber()}{partOfUrl}'
     return url, partOfUrl
 
+
 def expectResponseStartsWithCorrectPrefix(s):
     if not s.startswith('Molten:'):
         raise MoltenTFException('Did not start with expected prefix ' + s)
     else:
         return s[len('Molten:'):]
+
 
 def smallTests():
     checkOkDestPath('a')

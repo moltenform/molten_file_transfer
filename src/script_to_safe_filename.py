@@ -9,6 +9,7 @@
 import os
 from mft_common import *
 
+
 def toWindowsSafeFilename(d, maxNameLen):
     for f, short in list(files.recurseFiles(d)):
         if short == '.DS_Store':
@@ -30,14 +31,16 @@ def toWindowsSafeFilename(d, maxNameLen):
 
             files.move(f, fRenamed, False, doTrace=True)
 
+
 def addNumber(f):
     for i in range(100):
-        attempt = files.splitExt(f)[0] + '.%03d'%i + files.splitExt(f)[1]
+        attempt = files.splitExt(f)[0] + '.%03d' % i + files.splitExt(f)[1]
         if not files.exists(attempt):
             return attempt
 
     assertWarn(False, "Cannot rename", f)
     return None
+
 
 def makeDirList(dir, outfile):
     with open(outfile, 'w', encoding='utf-8') as fout:
@@ -48,6 +51,7 @@ def makeDirList(dir, outfile):
             fout.write('\t')
             fout.write(str(files.getLastModTime(f)))
             fout.write('\n')
+
 
 if __name__ == '__main__':
     gMaxNameLen = 75

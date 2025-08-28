@@ -4,11 +4,14 @@
 
 from mft_common import *
 
+
 def parseIndexParam(params, fileState):
     if not fileState or not fileState.listOfFiles:
         raise MoltenTFException(
-            'Internal error, get_file_list should have been called first')
+            'Internal error, get_file_list should have been called first'
+        )
     return fileState.listOfFiles.infoAtIndexString(params, 'index')
+
 
 def get_file_list(params, stateGetFile, path, isStar):
     stateGetFile.b = Bucket()
@@ -18,15 +21,18 @@ def get_file_list(params, stateGetFile, path, isStar):
     response = 'Molten:' + response
     return Bucket(directPath=None, response=response)
 
+
 def get_file(params, stateGetFile):
     item = parseIndexParam(params, stateGetFile.b)
     showMsg(msgMed, f'  {files.getName(item.filename)}')
     return Bucket(response=None, directPath=item.filename)
 
+
 def get_file_complete(params, stateGetFile):
     showMsg(msgMed, '\n\nget_file is complete :)\n\n')
     stateGetFile.b = None
     return Bucket(directPath=None, response='Molten:Success')
+
 
 def send_file_list(params, stateSendFile):
     # sends files delimited by |
@@ -41,6 +47,7 @@ def send_file_list(params, stateSendFile):
     stateSendFile.b.listOfFiles = SerializableListOfFileInfo()
     stateSendFile.b.listOfFiles.deserialize(fls)
     return Bucket(directPath=None, response='Molten:Success')
+
 
 def send_file(params, stateSendFile, serverRStream, headers):
     item = parseIndexParam(params, stateSendFile.b)
@@ -59,8 +66,10 @@ def send_file(params, stateSendFile, serverRStream, headers):
         showMsg(msgHigh, 'content-length not seen, assuming 0', expectedLen)
         expectedLen = 0
     showMsg(msgMed, f'reading data of length {formatSize(expectedLen)}')
-    doAndCheckForFileAccessErrAndReRaise(lambda: send_file_stream_content(
-        serverRStream, expectedLen, fulldest), fulldest)
+    doAndCheckForFileAccessErrAndReRaise(
+        lambda: send_file_stream_content(serverRStream, expectedLen, fulldest),
+        fulldest
+    )
 
     checksumGot = files.computeHash(fulldest, 'sha256')
     checksumExpected = item.checksum
@@ -69,15 +78,18 @@ def send_file(params, stateSendFile, serverRStream, headers):
             f'expected {checksumExpected} but got {checksumGot}'
         showMsg(msgHigh, warning)
         stateSendFile.b.warnings.append(warning)
-    showMsg(msgMed,
-        f'  {files.getName(fulldest)}')
-    showMsg(msgVerbose,
-        f'  checksumGot={checksumGot}|checksumExpected={checksumExpected}')
+    showMsg(msgMed, f'  {files.getName(fulldest)}')
+    showMsg(
+        msgVerbose,
+        f'  checksumGot={checksumGot}|checksumExpected={checksumExpected}'
+    )
     return Bucket(directPath=None, response='Molten:Success')
+
 
 def send_file_stream_content(serverRStream, expectedLen, fulldest):
     with open(fulldest, 'wb') as f:
         memoryEfficientCopyFromStreamLen(serverRStream, f, expectedLen)
+
 
 def send_file_complete(params, stateSendFile):
     showMsg(msgMed, '\n\nsend_file is complete :)\n\n')

@@ -6,6 +6,7 @@ import requests
 import time
 from mft_common import *
 
+
 def goClientSend(cxnParams, isStar, path):
     listOfFiles = SerializableListOfFileInfo()
     listOfFiles.addFromSpec(path, isStar)
@@ -29,21 +30,28 @@ def goClientSend(cxnParams, isStar, path):
         getParams['index'] = str(i)
         with open(item.filename, 'rb') as f:
             specialPostArgs = dict(data=f)
-            sendPostAndCheckSuccess(cxnParams, '/send_file', getParams,
-                specialPostArgs=specialPostArgs, timeout=None)
+            sendPostAndCheckSuccess(
+                cxnParams,
+                '/send_file',
+                getParams,
+                specialPostArgs=specialPostArgs,
+                timeout=None
+            )
 
     # step 3: tell server we are done
     showMsg(msgMed, 'telling the server we are done...')
     sendPostAndCheckSuccess(cxnParams, '/send_file_complete', {})
     getPressEnterToContinue('Complete')
 
+
 # requests supports sending a streaming POST body,
 # skipping loading it all into memory,
 # that's good, but the only way to do that is to send it raw,
 # sending POST with no key/value pairs.
 # so we'll send the other keys and values over query params like a GET
-def sendPostAndCheckSuccess(cxnParams, suburl, getParams,
-        specialPostArgs=None, timeout=10):
+def sendPostAndCheckSuccess(
+    cxnParams, suburl, getParams, specialPostArgs=None, timeout=10
+):
     time.sleep(1)
 
     args = {}
@@ -52,7 +60,9 @@ def sendPostAndCheckSuccess(cxnParams, suburl, getParams,
     else:
         args['data'] = None
 
-    url, urlpart = createServerUrlString(cxnParams, suburl, moreGetParams=getParams)
+    url, urlpart = createServerUrlString(
+        cxnParams, suburl, moreGetParams=getParams
+    )
     showMsg(msgInfo, '---------------', urlpart)
 
     args['timeout'] = timeout
@@ -66,5 +76,7 @@ def sendPostAndCheckSuccess(cxnParams, suburl, getParams,
         showMsg(msgHigh, res.text.strip())
         raise MoltenTFException('Got a message from server.')
 
-    assertTrueMolten('Molten:Success' == res.text.strip(),
-        'Server did not return expected response', res.text.strip())
+    assertTrueMolten(
+        'Molten:Success' == res.text.strip(),
+        'Server did not return expected response', res.text.strip()
+    )

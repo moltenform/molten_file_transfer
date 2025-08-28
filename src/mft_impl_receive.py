@@ -6,6 +6,7 @@ import requests
 import time
 from mft_common import *
 
+
 def goClientReceive(cxnParams):
     # step 1: ask the server what files are there
     showMsg(msgMed, 'asking the server what files are there...')
@@ -26,18 +27,21 @@ def goClientReceive(cxnParams):
         getParams = {}
         getParams['index'] = str(i)
         res, resText = sendGetAndCheckSuccess(
-            cxnParams, '/get_file', getParams, stream=True, timeout=None)
+            cxnParams, '/get_file', getParams, stream=True, timeout=None
+        )
         fulldest = checkWriteFile(item.filename)
 
-        doAndCheckForFileAccessErrAndReRaise(lambda: doWriteToFile(res, fulldest),
-            fulldest)
+        doAndCheckForFileAccessErrAndReRaise(
+            lambda: doWriteToFile(res, fulldest), fulldest
+        )
 
         checksumGot = files.computeHash(fulldest, 'sha256')
         checksumExpected = item.checksum
-        showMsg(msgMed,
-            f'  {files.getName(fulldest)}')
-        showMsg(msgVerbose,
-            f'  checksumGot={checksumGot}|checksumExpected={checksumExpected}')
+        showMsg(msgMed, f'  {files.getName(fulldest)}')
+        showMsg(
+            msgVerbose,
+            f'  checksumGot={checksumGot}|checksumExpected={checksumExpected}'
+        )
         if checksumExpected != checksumGot:
             warning = f'{files.getName(fulldest)} wrong checksum, ' + \
                 f'expected {checksumExpected} but got {checksumGot}'
@@ -46,19 +50,23 @@ def goClientReceive(cxnParams):
     # step 3: tell server we are done
     showMsg(msgMed, 'tell server we are done...')
     res, resText = sendGetAndCheckSuccess(cxnParams, '/get_file_complete')
-    assertTrueMolten(resText == 'Success',
-        'Server did not return expected response', resText)
+    assertTrueMolten(
+        resText == 'Success', 'Server did not return expected response', resText
+    )
 
     getPressEnterToContinue('Complete')
+
 
 def doWriteToFile(res, fulldest):
     totalGot = 0
     with open(fulldest, 'wb') as f:
         for chunk in res.iter_content(
-                chunk_size=memBufferSize, decode_unicode=False):
+            chunk_size=memBufferSize, decode_unicode=False
+        ):
             totalGot += len(chunk)
             showMsg(msgMed, f'received {formatSize(totalGot)}')
             f.write(chunk)
+
 
 def checkWriteFile(itemPath):
     checkOkDestPath(itemPath)
@@ -70,8 +78,10 @@ def checkWriteFile(itemPath):
 
     return dest
 
-def sendGetAndCheckSuccess(cxnParams, suburl,
-        getParams=None, stream=False, timeout=10):
+
+def sendGetAndCheckSuccess(
+    cxnParams, suburl, getParams=None, stream=False, timeout=10
+):
     time.sleep(1)
     url, urlpart = createServerUrlString(cxnParams, suburl, getParams)
     showMsg(msgInfo, '---------------', urlpart)

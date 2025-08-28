@@ -4,7 +4,10 @@ from shinerainsevenlib.standard import *
 
 
 def mainPylint():
-    args = ['-m', 'pylint', '--rcfile', 'pyproject.toml', '--ignore-paths=.*OUTSIDE.*', '--output-format=json2', '.']
+    args = [
+        '-m', 'pylint', '--rcfile', 'pyproject.toml', '--ignore-paths=.*OUTSIDE.*',
+        '--output-format=json2', '.'
+    ]
     pyExe = sys.executable
     args.insert(0, pyExe)
     print(args)
@@ -29,11 +32,15 @@ def mainPylint():
 
         print(line)
 
+
 def mainRuff():
-    args = ['-m', 'ruff', 'check', '--config=pyproject.toml', '--output-format=json', '--exclude=.*OUTSIDE.*']
+    args = [
+        '-m', 'ruff', 'check', '--config=pyproject.toml', '--output-format=json',
+        '--exclude=.*OUTSIDE.*'
+    ]
     if '--fix' in sys.argv:
         args.append('--fix')
-    
+
     args.append('.')
     pyExe = sys.executable
     args.insert(0, pyExe)
@@ -49,9 +56,11 @@ def mainRuff():
 
         print(line)
 
+
 def formatOneLineRuff(msg):
     # example.py:32:67: W0640: An example message (the-warning-type)
     return f"{msg['filename']}:{msg['location'].get('row')}:{msg['location'].get('column')}: {msg['code']} {msg['message']} ({msg.get('url', '').split('/')[-1]})"
+
 
 def formatOneLinePylint(msg):
     # example.py:32:67: W0640: An example message (the-warning-type)

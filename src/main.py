@@ -11,6 +11,7 @@ import mft_impl_receive
 # the 'requests' module is a dependency
 # for running a 'client', not a 'server'
 
+
 def main():
     msg = '''\nWelcome to molten_file_transfer.\n''' \
         '''Ben Fisher, 2019.\n''' \
@@ -55,6 +56,7 @@ def main():
                     trace(str(caught))
                     sys.exit(1)
 
+
 def initStartServerSend():
     trace('Which file(s) should we host on the server?')
     isStar, path = getUserTypedFilesOrThrow()
@@ -64,8 +66,10 @@ def initStartServerSend():
         raise MoltenTFException('No files found at this location')
     goStartServer(isStar, path)
 
+
 def initStartServerReceive():
     goStartServer('listen', 'listen')
+
 
 def initClientSend():
     cxnParams = goClientConnectOrThrow()
@@ -73,10 +77,12 @@ def initClientSend():
     isStar, path = getUserTypedFilesOrThrow()
     mft_impl_send.goClientSend(cxnParams, isStar, path)
 
+
 def initClientReceive():
     cxnParams = goClientConnectOrThrow()
     getPressEnterToContinue('Start receiving files from the server?')
     mft_impl_receive.goClientReceive(cxnParams)
+
 
 def getUserTypedFilesOrThrow():
     example = 'C:\\MyFiles\\* or C:\\MyFiles\\*.jpg' if sys.platform == 'win32' \
@@ -86,11 +92,14 @@ def getUserTypedFilesOrThrow():
         trace('using this path,', useHardcodedFilesToSend)
         typed = useHardcodedFilesToSend
     else:
-        typed = getStrInput('Please enter the path of a file or ' +
-            'directory \nFor example, you could type ' + example + '\n')
+        typed = getStrInput(
+            'Please enter the path of a file or ' +
+            'directory \nFor example, you could type ' + example + '\n'
+        )
 
     isStar, path = parseWildcardExpr(typed)
     return isStar, path
+
 
 def parseWildcardExpr(s):
     tooComplex = 'We currently only support simple wildcards ' + \
@@ -98,8 +107,10 @@ def parseWildcardExpr(s):
     parts = s.split('*')
     if len(parts) <= 1:
         if files.isDir(s):
-            raise MoltenTFException('To send all files in a directory, ' +
-                'type something like "/home/myfiles/*"')
+            raise MoltenTFException(
+                'To send all files in a directory, ' +
+                'type something like "/home/myfiles/*"'
+            )
         if not files.exists(s):
             raise MoltenTFException('file does not exist: ' + s)
         return False, s
@@ -107,6 +118,7 @@ def parseWildcardExpr(s):
         raise MoltenTFException(tooComplex)
 
     return True, s
+
 
 def goClientConnectOrThrow():
     cxnParams = Bucket()
