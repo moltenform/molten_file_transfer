@@ -122,8 +122,9 @@ class MoltenFileTransferServer(BaseHTTPRequestHandler):
             headers=self.headers,
             environ=env)
 
-        # allow unused variable since this is just example code
-        data = form['key'].value  # pylint: disable=F841
+        data = form['key'].value
+        if not data:
+            print('No data.')
 
     def isTokenValid(self, params):
         tkGot = params.get('token')

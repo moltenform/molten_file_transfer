@@ -18,7 +18,20 @@
         {
             "label": "ruff lint",
             "type": "shell",
-            "command": "py -m ruff check .",
+            "command": "py .vscode/pylint_filtered.py --ruff",
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+        },
+        {
+            "label": "ruff lint autofix",
+            "type": "shell",
+            "command": "py .vscode/pylint_filtered.py --ruff --fix",
             "problemMatcher": [],
             "group": {
                 "kind": "build",
