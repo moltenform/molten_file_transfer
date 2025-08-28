@@ -58,7 +58,9 @@ def sendPostAndCheckSuccess(cxnParams, suburl, getParams,
     args['timeout'] = timeout
     args['url'] = url
     args['headers'] = {'Content-Type': 'application/octet-stream'}
-    res = requests.post(**args)
+
+    # haven't yet added timeout logic
+    res = requests.post(**args) # pylint: disable=missing-timeout
     if res.status_code != 200:
         showMsg(msgHigh, f'Error: returned code {res.status_code}')
         showMsg(msgHigh, res.text.strip())

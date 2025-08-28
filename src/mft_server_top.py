@@ -9,7 +9,7 @@
 
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from urllib.parse import urlparse, parse_qs
-import cgi
+import cgi # pylint: disable=W4901
 import sys
 
 from mft_common import *
@@ -123,7 +123,7 @@ class MoltenFileTransferServer(BaseHTTPRequestHandler):
             environ=env)
 
         # allow unused variable since this is just example code
-        data = form['key'].value  # noqa: F841
+        data = form['key'].value  # pylint: disable=F841
 
     def isTokenValid(self, params):
         tkGot = params.get('token')
@@ -152,8 +152,8 @@ class MoltenFileTransferServer(BaseHTTPRequestHandler):
     def doAndCatch(self, fn):
         try:
             fn()
-        except MoltenTFException as err:
-            self.mySendErr(str(err))
+        except MoltenTFException as topErr:
+            self.mySendErr(str(topErr))
         except:
             if debugMode():
                 raise
@@ -188,7 +188,8 @@ def goStartServer(filesIsStar, filesPath):
         logPath = f'{getOurDirectory()}/log'
 
         def makeLogFile():
-            server.RequestHandlerClass.logfile = open(logPath, 'a')
+            server.RequestHandlerClass.logfile = open(logPath, 'a', encoding='utf-8')
+
         doAndCheckForFileAccessErrAndReRaise(makeLogFile, logPath)
         showMsg(msgMed, 'started server on port', getPortNumber())
         showMsg(msgMed, '\nReady to go! When you are done, press ctrl-c to exit.')

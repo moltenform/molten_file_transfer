@@ -4,15 +4,16 @@
 
 import sys
 import urllib
-sys.path.append('bn_python_common.zip')
-from bn_python_common import *
+from shinerainsevenlib.standard import *
+from shinerainsevenlib.core import *
 
 # use a 4mb buffer
 memBufferSize = 4 * 1024 * 1024
 
 useHardcodedServerAddress = False
 useHardcodedFilesToSend = False
-useHardcodedToken = False
+useDebugMode = False
+useHardcodedToken = useDebugMode
 
 def memoryEfficientCopyFileObject(src, dest):
     while True:
@@ -72,7 +73,7 @@ def genToken():
         return secrets.token_urlsafe(6)
 
 def debugMode():
-    return not not useHardcodedToken
+    return bool(useDebugMode)
 
 class MoltenTFException(Exception):
     pass
@@ -83,7 +84,7 @@ def assertTrueMolten(b, context1='', context2='', context3=''):
         raise MoltenTFException(msg)
 
 def getPortNumberAsString():
-    return ':' + str(portNumber())
+    return ':' + str(getPortNumber())
 
 def isSimpleAlphaNumOrSymbolOrHigherUnicode(s):
     for c in s:
@@ -156,13 +157,13 @@ class SerializableListOfFileInfo(object):
             pathsToAdd.append(path)
 
         pathsToAdd.sort()
-        for path in pathsToAdd:
-            self.addFiles([path])
+        for pathToAdd in pathsToAdd:
+            self.addFiles([pathToAdd])
 
 def isOkExtension(s):
-    status = files.extensionPossiblyExecutable(s)
+    status = SrssFileExts.extensionPossiblyExecutable(s)
     if status == 'warn':
-        warn('Warning: extension ' + ext + ' might be executable. continue?')
+        warn('Warning: extension ' + files.getExt(s) + ' might be executable. continue?')
         return True
     elif status:
         return False
@@ -199,9 +200,9 @@ def doAndCheckForFileAccessErrAndReRaise(fn, filepath):
     try:
         fn()
     except OSError:
-        getPressEnterToContinue(f"Looks like we could not access a file " +
+        getPressEnterToContinue("Looks like we could not access a file " +
             f"({filepath}). Unless you're already doing so, try running" +
-            f" this script in a writable directory, and try again.")
+            " this script in a writable directory, and try again.")
         raise
 
 def getStrInput(s, allowEmptyString=False):
@@ -286,5 +287,4 @@ def smallTests():
     trace('small tests pass')
 
 
-if debugMode():
-    smallTests()
+smallTests()

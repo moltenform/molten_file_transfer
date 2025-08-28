@@ -1,0 +1,21 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Run tests",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "pytest",
+            "args": ["--capture=no", "--maxfail=1", "-v", "tests/"],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "name": "Run ui tests",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "ui_end_to_end_tests.py",
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}"
+        },
+    ]
+}

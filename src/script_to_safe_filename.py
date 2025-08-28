@@ -6,6 +6,7 @@
 # since different operating systems are more restrictive
 # in which characters are allowed in a filename.
 
+import os
 from mft_common import *
 
 def toWindowsSafeFilename(d, maxNameLen):
@@ -36,10 +37,11 @@ def addNumber(f):
             return attempt
 
     assertWarn(False, "Cannot rename", f)
+    return None
 
 def makeDirList(dir, outfile):
     with open(outfile, 'w', encoding='utf-8') as fout:
-        for f, short in sorted(list(files.recurseFiles(dir))):
+        for f, _short in sorted(files.recurseFiles(dir)):
             fout.write(f)
             fout.write('\t')
             fout.write(str(files.getSize(f)))
@@ -48,6 +50,6 @@ def makeDirList(dir, outfile):
             fout.write('\n')
 
 if __name__ == '__main__':
-    maxNameLen = 75
-    dir = '/path'
-    toWindowsSafeFilename(dir, maxNameLen)
+    gMaxNameLen = 75
+    gDir = '/path'
+    toWindowsSafeFilename(gDir, gMaxNameLen)
